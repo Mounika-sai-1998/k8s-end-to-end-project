@@ -1,0 +1,65 @@
+take a server with m7i-flex.large instance type
+install git ------->> yum install git -y
+clone the repository ----->> git clone -b master https://github.com/Mounika-sai-1998/k8s-project.git
+
+giving permissions in IAM resource:
+-----------------------------------
+create a user terraform in IAM users
+go to terraform user and create accesskey(CLI)
+go to cli of server and give the command ----aws configure---- and give the accesskey and secretkey
+permissions ---->> add permissions ---->> attach policies directly ---->> administration-full-access  
+
+install terraform :
+-------------------
+sudo yum install -y yum-utils shadow-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum install terraform
+terraform version
+terraform init ----->> to initialize all the plugins
+terraform apply --auto-approve    ----->>  to create resources through terraform
+terraform destroy --auto-approve  ------>>> to delete resources created through terraform 
+
+to list the cluster------->>>>  aws eks list-clusters --region=us-east-2
+to integrate with the cluster ------>>> aws eks update-kubeconfig --region us-east-2 --name EKS_CLOUD
+
+kubectl installation:
+--------------------
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.35.3/2026-04-08/bin/linux/amd64/kubectl
+chmod +x kubectl
+mv kubectl /usr/local/bin/
+
+to list cluster nodes ------>> kubectl get no
+
+
+yum install java-21-amazon-corretto -y    ----------->>>   install java
+
+install and start jenkins:
+    sudo wget -O /etc/yum.repos.d/jenkins.repo     https://pkg.jenkins.io/rpm-stable/jenkins.repo
+    yum install jenkins -y
+    systemctl start jenkins
+    systemctl status jenkins
+yum install docker -y && systemctl start docker  ------>> install and start docker
+chmod 777 /var/run/docker.sock   -------- >    to give permissions to build images
+docker run -itd --name sonar -p 1234:9000 sonarqube:lts-community     -------->  to install sonarqube
+
+install trivy:
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.73.0
+    trivy --version
+
+install ingress:
+----------------
+kubectl create -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml
+
+
+
+
+plugins installed:
+------------------
+1) pipelinestage
+2) sonarqube scanner
+3) sonar quality gates
+4) docker pipelines
+5) kubernetes
+6) kubernetes CLI
+7) kuberenets credentials
+
