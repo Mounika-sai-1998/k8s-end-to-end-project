@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('cleanWS') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('Code') {
+            steps {
+                git "https://github.com/Mounika-sai-1998/ltibbhackathon.git"
+            }
+        }
+        stage('CQA') {
+            environment {
+                scannerHome = tool 'mysonar'
+            }
+            steps {
+                withSonarQubeEnv('mysonar') {
+                     sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=myproject"
+                }
+            }
+        }
+        stage('QualityGates') {
+            steps {
+                waitForQualityGate abortPipeline: true, credentialsId: 'sonarID'
+            }
+        }
+        stage('Images') {
+            steps {
+                sh "docker build -t mounikaaarepu/phpapp:appimage ."
+                sh "docker build -t mounikaaarepu/phpapp:dbimage database"
+            }
+        }
+        stage('trivy') {
+            steps {
+                sh "trivy image mounikaaarepu/phpapp:appimage"
+                sh "trivy image mounikaaarepu/phpapp:dbimage"
+            }
+        }
+        stage('Registry') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'dockerID') {
+                        sh "docker push mounikaaarepu/phpapp:appimage"
+                        sh "docker push mounikaaarepu/phpapp:dbimage"
+                    }
+                }
+            }
+        }
+    }
+}
