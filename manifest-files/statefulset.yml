@@ -1,32 +1,34 @@
----
 apiVersion: apps/v1
 kind: StatefulSet
-metadata: 
+metadata:
   name: my-statefulset
-  namespace: default      
-spec: 
+  namespace: default
+
+spec:
   serviceName: mysqldb
   replicas: 1
+
   selector:
     matchLabels:
       app: app-db
+
   template:
     metadata:
       labels:
         app: app-db
+
     spec:
       containers:
         - name: container-db
           image: mounikaaarepu/phpapp:dbimage
+
           ports:
             - containerPort: 3306
 
-          # secret references
           envFrom:
             - secretRef:
                 name: my-secret
 
-          # resource quota references
           resources:
             requests:
               memory: "128Mi"
@@ -35,19 +37,17 @@ spec:
               memory: "256Mi"
               cpu: "200m"
 
-          # persistent volume claim references
           volumeMounts:
-          - name: my-pvc
-            mountPath: /var/lib/mysql 
+            - name: my-pvc
+              mountPath: /var/lib/mysql-data
 
-
-      # persistent volume claim templates
-      volumeClaimTemplates:
-      - metadata:
-          name: my-pvc
-        spec:
-          accessModes: 
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 2Gi 
+  volumeClaimTemplates:
+    - metadata:
+        name: my-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: gp2
+        resources:
+          requests:
+            storage: 2Gi

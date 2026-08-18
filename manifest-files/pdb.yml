@@ -1,6 +1,6 @@
 ---
 apiVersion: policy/v1
-kind: podDisruptionBudget
+kind: PodDisruptionBudget
 metadata:
   name: my-pdb
   namespace: default
